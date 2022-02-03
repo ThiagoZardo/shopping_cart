@@ -1,3 +1,4 @@
+// Para desenvolver essa função recebi ajuda do Imar com a linha 5.
 const getSavedCartItems = () => {
   const cartItem = document.querySelector('.cart__items');
   const saveCart = localStorage.getItem('cartItems');

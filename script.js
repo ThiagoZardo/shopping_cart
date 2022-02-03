@@ -60,8 +60,17 @@ const includeProductsInTheSite = async () => {
   results.forEach((element) => sectionItems.appendChild(createProductItemElement(element)));
 };
 
+// Função para remover os itens clicados que já estão salvos no localStorage. *Consultei o meu "projeto To do List".
+const removeClickSaved = () => {
+  for (let i = 0; i < cartItems.childNodes.length; i += 1) {
+    cartItems.childNodes[i].addEventListener('click', cartItemClickListener);
+  }
+};
+
 window.onload = async () => {
   getSavedCartItems(cartItems);
+  removeClickSaved();
+
   await includeProductsInTheSite();
   const itemAdd = document.querySelectorAll('.item__add');
   itemAdd.forEach((element) => element.addEventListener('click', AddCart));
