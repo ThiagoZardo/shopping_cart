@@ -1,6 +1,5 @@
 require('../mocks/fetchSimulator');
 const { fetchItem } = require('../helpers/fetchItem');
-const { fetchProducts } = require('../helpers/fetchProducts');
 const item = require('../mocks/item');
 
 describe('2 - Teste a função fecthItem', () => {
@@ -26,7 +25,7 @@ describe('2 - Teste a função fecthItem', () => {
   })
 
   it('5- Verifica se, ao chamar a função fetchItem sem argumento, retorna um erro com a mensagem: "You must provide an url"', async () => {
-    const failRequest = await fetchProducts();
+    const failRequest = await fetchItem();
     expect(failRequest).toEqual(new Error('You must provide an url'));
   })
 
