@@ -141,9 +141,10 @@ body {
 }
 
 .cart__items li {
+  cursor: pointer;
   padding: 0 4%;
   margin: 30px 0;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid rgb(207, 201, 201);
 }
 
 .empty-cart {
