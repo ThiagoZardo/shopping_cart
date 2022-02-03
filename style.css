@@ -148,6 +148,7 @@ body {
 }
 
 .empty-cart {
+  cursor: pointer;
   width: 170px;
   height: 35px;
   margin: 0 auto;

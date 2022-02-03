@@ -67,10 +67,21 @@ const removeClickSaved = () => {
   }
 };
 
+// Botão Esvaziar Carrinho
+const clearCart = () => {
+  const emptyCart = document.querySelector('.empty-cart');
+  emptyCart.addEventListener('click', () => {
+    for (let j = cartItems.childNodes.length - 1; j >= 0; j -= 1) {
+      cartItems.childNodes[j].remove();
+    }
+    localStorage.clear(); // Limpa o localStorage https://qastack.com.br/programming/7667958/clearing-localstorage-in-javascript
+  });
+};
+
 window.onload = async () => {
   getSavedCartItems(cartItems);
   removeClickSaved();
-
+  clearCart();
   await includeProductsInTheSite();
   const itemAdd = document.querySelectorAll('.item__add');
   itemAdd.forEach((element) => element.addEventListener('click', AddCart));
