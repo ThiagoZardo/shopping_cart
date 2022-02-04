@@ -2,7 +2,6 @@
 let total = 0;
 const cartItemsOl = document.querySelector('.cart__items');
 
-
 // Função veio pronta "Exibe imagem do produto" 
 function createProductImageElement(imageSource) {
   const img = document.createElement('img');
@@ -23,12 +22,12 @@ function createCustomElement(element, className, innerText) {
 function createProductItemElement({ id: sku, title: name, thumbnail: image }) {
   const section = document.createElement('section');
   section.className = 'item';
-
+  
   section.appendChild(createCustomElement('span', 'item__sku', sku));
   section.appendChild(createCustomElement('span', 'item__title', name));
   section.appendChild(createProductImageElement(image));
   section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'));
-
+  
   return section;
 }
 
@@ -36,6 +35,22 @@ function createProductItemElement({ id: sku, title: name, thumbnail: image }) {
 function getSkuFromProductItem(item) {
   return item.querySelector('span.item__sku').innerText;
 }
+
+const reducePrice = (string) => {
+  const stringSplit = string.split('$');
+  const itemPrice = stringSplit[stringSplit.length - 1];
+  total -= Number(itemPrice);
+};
+
+const priceParagraph = document.createElement('p');
+// Requisito 05 Somar os valores dos produtos.
+const price = async () => {
+  const containerCartTitle = document.querySelector('.container-cartTitle');
+  priceParagraph.className = 'total-price';
+  priceParagraph.innerHTML = `${parseFloat(total)}`;
+  // `${total.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}`;
+  containerCartTitle.appendChild(priceParagraph);
+};
 
 // Função criada remove os items clicados e salva no localStorage.
 function cartItemClickListener(event) {
@@ -54,12 +69,6 @@ function createCartItemElement({ id: sku, title: name, price: salePrice }) {
   return li;
 }
 
-const reducePrice = (string) => {
-  const stringSplit = string.split('$');
-  const itemPrice = stringSplit[stringSplit.length-1];
-  total -= Number(itemPrice);
-}
-
 // Função criada que adciona os produtos no carrinho de compras. Imar me ajudou a estruturar essa Função
 // Ao clicar no botão, chamo o Pai (ou seja a section com todos os dados do produto) depois passo esse elemento como parametro para
 
@@ -74,16 +83,6 @@ const AddCart = async (event) => {
   saveCartItems(cartItemsOl);
 };
 
-const priceParagraph = document.createElement('p');
-// Requisito 05 Somar os valores dos produtos.
-const price = async () => {
-  const containerCartTitle = document.querySelector('.container-cartTitle');
-  priceParagraph.className = 'total-price';
-  priceParagraph.innerHTML = `${parseFloat(total)}`;
-  // `${total.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}`;
-  containerCartTitle.appendChild(priceParagraph);
-} 
-
 const includeProductsInTheSite = async () => {
   const createProducts = await fetchProducts('computador');
   const sectionItems = document.querySelector('.items');
@@ -97,7 +96,7 @@ const updatePrice = () => {
     cartItemsOl.childNodes[i].addEventListener('click', cartItemClickListener);
     const textLi = cartItemsOl.childNodes[i].innerText;
     const textLiSplit = textLi.split('$');
-    const itemPrice = textLiSplit[textLiSplit.length-1];
+    const itemPrice = textLiSplit[textLiSplit.length - 1];
     total += Number(itemPrice);
     price();
   }
