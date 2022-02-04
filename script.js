@@ -1,13 +1,15 @@
 // const { fetchProducts } = require("./helpers/fetchProducts");
 let total = 0;
 const cartItemsOl = document.querySelector('.cart__items');
+const container = document.querySelector('.items');
+const textLoading = document.createElement('p');
+const priceParagraph = document.createElement('p');
 
 function sleep(time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
-const container = document.querySelector('.items');
-const textLoading = document.createElement('p');
 
+// Função Carregando
 const loading = () => {
     textLoading.className = 'loading';
     textLoading.innerHTML = 'carregando...';
@@ -23,7 +25,7 @@ function createProductImageElement(imageSource) {
   return img;
 }
 
-// Função veio pronta "Cria um elemento com os dados recebidos por parametros id, nome, imagem" 
+// Função veio pronta "Cria um elemento com os dados recebidos por parametros da função createProductItemElement (id, nome, imagem)" 
 function createCustomElement(element, className, innerText) {
   const e = document.createElement(element);
   e.className = className;
@@ -48,14 +50,14 @@ function getSkuFromProductItem(item) {
   return item.querySelector('span.item__sku').innerText;
 }
 
+// Função que calcula o preço quando um item é removido do carrinho. Fiz com a ajuda do Roberval na monitoria.
 const reducePrice = (string) => {
   const stringSplit = string.split('$');
   const itemPrice = stringSplit[stringSplit.length - 1];
   total -= Number(itemPrice);
 };
 
-const priceParagraph = document.createElement('p');
-// Requisito 05 Somar os valores dos produtos.
+// Requisito 05 ajusta o formato do valor total.
 const price = async () => {
   const containerCartTitle = document.querySelector('.container-cartTitle');
   priceParagraph.className = 'total-price';
@@ -64,7 +66,7 @@ const price = async () => {
   containerCartTitle.appendChild(priceParagraph);
 };
 
-// Função criada remove os items clicados e salva no localStorage.
+// Remove os items clicados e salva no localStorage.
 function cartItemClickListener(event) {
   reducePrice(event.target.innerText);
   price();
@@ -72,7 +74,7 @@ function cartItemClickListener(event) {
   saveCartItems(cartItemsOl);
 }
 
-// Função veio pronta "Alterei os parametros para bater com as chaves do objeto" Cria os itens em li's criadas dinamicamente e preenche com os valores corretos do produto.
+// Função veio pronta "Alterei os parametros para bater com as chaves do objeto" Cria os itens em li's criadas dinamicamente e preenche com os valores corretos do produto, Imar Mendes me ajudou.
 function createCartItemElement({ id: sku, title: name, price: salePrice }) {
   const li = document.createElement('li');
   li.className = 'cart__item';
@@ -82,8 +84,7 @@ function createCartItemElement({ id: sku, title: name, price: salePrice }) {
 }
 
 // Função criada que adciona os produtos no carrinho de compras. Imar me ajudou a estruturar essa Função
-// Ao clicar no botão, chamo o Pai (ou seja a section com todos os dados do produto) depois passo esse elemento como parametro para
-
+// Ao clicar no botão, chamo o Pai (ou seja a section com todos os dados do produto) depois passo esse produto como parametro para a função getSkuFromProductItem e faz a soma dos produtos adcionados ao carrinho. Imar Mendes me ajudou. 
 const AddCart = async (event) => {
   const elemento = event.target.parentNode;
   const productID = getSkuFromProductItem(elemento);
@@ -95,6 +96,7 @@ const AddCart = async (event) => {
   saveCartItems(cartItemsOl);
 };
 
+// inclui os produtos na página do site buscando o fetch no arquivo fetchProducts. Imar Mendes me ajudou.
 const includeProductsInTheSite = async () => {
   const createProducts = await fetchProducts('computador');
   const sectionItems = document.querySelector('.items');
