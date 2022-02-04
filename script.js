@@ -1,6 +1,9 @@
 // const { fetchProducts } = require("./helpers/fetchProducts");
-const cartItems = document.querySelector('.cart__items');
+let total = 0;
+const cartItemsOl = document.querySelector('.cart__items');
 
+
+// Função veio pronta "Exibe imagem do produto" 
 function createProductImageElement(imageSource) {
   const img = document.createElement('img');
   img.className = 'item__image';
@@ -8,6 +11,7 @@ function createProductImageElement(imageSource) {
   return img;
 }
 
+// Função veio pronta "Cria um elemento com os dados recebidos por parametros id, nome, imagem" 
 function createCustomElement(element, className, innerText) {
   const e = document.createElement(element);
   e.className = className;
@@ -15,6 +19,7 @@ function createCustomElement(element, className, innerText) {
   return e;
 }
 
+// Função veio pronta "Alterei os parametros para bater com as chaves do objeto"
 function createProductItemElement({ id: sku, title: name, thumbnail: image }) {
   const section = document.createElement('section');
   section.className = 'item';
@@ -27,15 +32,20 @@ function createProductItemElement({ id: sku, title: name, thumbnail: image }) {
   return section;
 }
 
+// Função veio pronta "Pega o ID do elemento"
 function getSkuFromProductItem(item) {
   return item.querySelector('span.item__sku').innerText;
 }
 
+// Função criada remove os items clicados e salva no localStorage.
 function cartItemClickListener(event) {
+  reducePrice(event.target.innerText);
+  price();
   event.target.remove();
-  saveCartItems(cartItems);
+  saveCartItems(cartItemsOl);
 }
 
+// Função veio pronta "Alterei os parametros para bater com as chaves do objeto" Cria os itens em li's criadas dinamicamente e preenche com os valores corretos do produto.
 function createCartItemElement({ id: sku, title: name, price: salePrice }) {
   const li = document.createElement('li');
   li.className = 'cart__item';
@@ -44,14 +54,35 @@ function createCartItemElement({ id: sku, title: name, price: salePrice }) {
   return li;
 }
 
+const reducePrice = (string) => {
+  const stringSplit = string.split('$');
+  const itemPrice = stringSplit[stringSplit.length-1];
+  total -= Number(itemPrice);
+}
+
+// Função criada que adciona os produtos no carrinho de compras. Imar me ajudou a estruturar essa Função
+// Ao clicar no botão, chamo o Pai (ou seja a section com todos os dados do produto) depois passo esse elemento como parametro para
+
 const AddCart = async (event) => {
   const elemento = event.target.parentNode;
   const productID = getSkuFromProductItem(elemento);
   const product = await fetchItem(productID);
   const returnCreateCartItemElement = createCartItemElement(product);
-  cartItems.appendChild(returnCreateCartItemElement);
-  saveCartItems(cartItems);
+  total += product.price;
+  price();
+  cartItemsOl.appendChild(returnCreateCartItemElement);
+  saveCartItems(cartItemsOl);
 };
+
+const priceParagraph = document.createElement('p');
+// Requisito 05 Somar os valores dos produtos.
+const price = async () => {
+  const containerCartTitle = document.querySelector('.container-cartTitle');
+  priceParagraph.className = 'total-price';
+  priceParagraph.innerHTML = `${parseFloat(total)}`;
+  // `${total.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}`;
+  containerCartTitle.appendChild(priceParagraph);
+} 
 
 const includeProductsInTheSite = async () => {
   const createProducts = await fetchProducts('computador');
@@ -61,9 +92,14 @@ const includeProductsInTheSite = async () => {
 };
 
 // Função para remover os itens clicados que já estão salvos no localStorage. *Consultei o meu "projeto To do List".
-const removeClickSaved = () => {
-  for (let i = 0; i < cartItems.childNodes.length; i += 1) {
-    cartItems.childNodes[i].addEventListener('click', cartItemClickListener);
+const updatePrice = () => {
+  for (let i = 0; i < cartItemsOl.childNodes.length; i += 1) {
+    cartItemsOl.childNodes[i].addEventListener('click', cartItemClickListener);
+    const textLi = cartItemsOl.childNodes[i].innerText;
+    const textLiSplit = textLi.split('$');
+    const itemPrice = textLiSplit[textLiSplit.length-1];
+    total += Number(itemPrice);
+    price();
   }
 };
 
@@ -71,18 +107,20 @@ const removeClickSaved = () => {
 const clearCart = () => {
   const emptyCart = document.querySelector('.empty-cart');
   emptyCart.addEventListener('click', () => {
-    for (let j = cartItems.childNodes.length - 1; j >= 0; j -= 1) {
-      cartItems.childNodes[j].remove();
+    for (let j = cartItemsOl.childNodes.length - 1; j >= 0; j -= 1) {
+      cartItemsOl.childNodes[j].remove();
     }
     localStorage.clear(); // Limpa o localStorage https://qastack.com.br/programming/7667958/clearing-localstorage-in-javascript
+    total = 0;
+    price();
   });
 };
 
 window.onload = async () => {
-  getSavedCartItems(cartItems);
-  removeClickSaved();
+  getSavedCartItems(cartItemsOl);
+  updatePrice();
   clearCart();
   await includeProductsInTheSite();
-  const itemAdd = document.querySelectorAll('.item__add');
-  itemAdd.forEach((element) => element.addEventListener('click', AddCart));
+  const buttonsAdd = document.querySelectorAll('.item__add');
+  buttonsAdd.forEach((buttonAdd) => buttonAdd.addEventListener('click', AddCart));
 };

@@ -155,3 +155,10 @@ body {
   border: 2px solid rgb(5, 52, 219);
   background-color: rgb(249, 249, 246);
 }
+
+.total-price {
+  margin-left: 20px;
+  font-weight: 700;
+  color: white;
+  z-index: 2;
+}
