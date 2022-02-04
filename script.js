@@ -2,6 +2,19 @@
 let total = 0;
 const cartItemsOl = document.querySelector('.cart__items');
 
+function sleep(time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
+const container = document.querySelector('.items');
+const textLoading = document.createElement('p');
+
+const loading = () => {
+    textLoading.className = 'loading';
+    textLoading.innerHTML = 'carregando...';
+    textLoading.style.fontSize = '50px';
+    container.appendChild(textLoading);  
+};
+
 // Função veio pronta "Exibe imagem do produto" 
 function createProductImageElement(imageSource) {
   const img = document.createElement('img');
@@ -22,7 +35,6 @@ function createCustomElement(element, className, innerText) {
 function createProductItemElement({ id: sku, title: name, thumbnail: image }) {
   const section = document.createElement('section');
   section.className = 'item';
-  
   section.appendChild(createCustomElement('span', 'item__sku', sku));
   section.appendChild(createCustomElement('span', 'item__title', name));
   section.appendChild(createProductImageElement(image));
@@ -116,6 +128,9 @@ const clearCart = () => {
 };
 
 window.onload = async () => {
+  loading();
+  await sleep(2000);
+  textLoading.remove();
   getSavedCartItems(cartItemsOl);
   updatePrice();
   clearCart();
