@@ -5,15 +5,11 @@ const container = document.querySelector('.items');
 const textLoading = document.createElement('p');
 const priceParagraph = document.createElement('p');
 
-function sleep(time) {
-  return new Promise((resolve) => setTimeout(resolve, time));
-}
-
 // Função Carregando
 const loading = () => {
     textLoading.className = 'loading';
     textLoading.innerHTML = 'carregando...';
-    textLoading.style.fontSize = '50px';
+    textLoading.style.fontSize = '20px';
     container.appendChild(textLoading);  
 };
 
@@ -34,12 +30,13 @@ function createCustomElement(element, className, innerText) {
 }
 
 // Função veio pronta "Alterei os parametros para bater com as chaves do objeto"
-function createProductItemElement({ id: sku, title: name, thumbnail: image }) {
+function createProductItemElement({ id: sku, title: name, thumbnail: image, price: salePrice }) {
   const section = document.createElement('section');
   section.className = 'item';
   section.appendChild(createCustomElement('span', 'item__sku', sku));
   section.appendChild(createCustomElement('span', 'item__title', name));
   section.appendChild(createProductImageElement(image));
+  section.appendChild(createCustomElement('span', 'item__price', `R$ ${salePrice}`));
   section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'));
   
   return section;
@@ -61,8 +58,8 @@ const reducePrice = (string) => {
 const price = async () => {
   const containerCartTitle = document.querySelector('.container-cartTitle');
   priceParagraph.className = 'total-price';
-  priceParagraph.innerHTML = `${parseFloat(total)}`;
-  // `${total.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}`;
+  priceParagraph.innerHTML = `${total.toLocaleString('pt-br',
+    { style: 'currency', currency: 'BRL' })}`;
   containerCartTitle.appendChild(priceParagraph);
 };
 
@@ -70,16 +67,29 @@ const price = async () => {
 function cartItemClickListener(event) {
   reducePrice(event.target.innerText);
   price();
-  event.target.remove();
+  event.target.parentElement.remove();
   saveCartItems(cartItemsOl);
 }
 
 // Função veio pronta "Alterei os parametros para bater com as chaves do objeto" Cria os itens em li's criadas dinamicamente e preenche com os valores corretos do produto, Imar Mendes me ajudou.
-function createCartItemElement({ id: sku, title: name, price: salePrice }) {
+function createCartItemElement({ id: _sku, title: name, price: salePrice, thumbnail }) {
+  const image = createProductImageElement(thumbnail);
+  image.className = 'icon__image';
+  const circle = document.createElement('div');
+  const x = document.createElement('p');
+  x.className = 'btn__x';
   const li = document.createElement('li');
+  circle.className = 'circle';
   li.className = 'cart__item';
-  li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
-  li.addEventListener('click', cartItemClickListener);
+  circle.appendChild(image);
+
+  li.innerText = ` ${name}
+  R$${salePrice}`;
+  x.innerText = 'x';
+  li.appendChild(circle);
+  li.appendChild(x);
+  x.addEventListener('click', cartItemClickListener);
+  console.log(li);
   return li;
 }
 
@@ -97,8 +107,8 @@ const AddCart = async (event) => {
 };
 
 // inclui os produtos na página do site buscando o fetch no arquivo fetchProducts. Imar Mendes me ajudou.
-const includeProductsInTheSite = async () => {
-  const createProducts = await fetchProducts('computador');
+const includeProductsInTheSite = async (item) => {
+  const createProducts = await fetchProducts(item);
   const sectionItems = document.querySelector('.items');
   const { results } = createProducts;
   results.forEach((element) => sectionItems.appendChild(createProductItemElement(element)));
@@ -131,12 +141,11 @@ const clearCart = () => {
 
 window.onload = async () => {
   loading();
-  await sleep(2000);
-  textLoading.remove();
   getSavedCartItems(cartItemsOl);
   updatePrice();
   clearCart();
-  await includeProductsInTheSite();
+  await includeProductsInTheSite('computador');
+  textLoading.remove();
   const buttonsAdd = document.querySelectorAll('.item__add');
   buttonsAdd.forEach((buttonAdd) => buttonAdd.addEventListener('click', AddCart));
 };

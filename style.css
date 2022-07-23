@@ -145,6 +145,11 @@ body {
   padding: 0 4%;
   margin: 30px 0;
   border-bottom: 1px solid rgb(207, 201, 201);
+  display: flex;
+}
+
+.circle {
+  
 }
 
 .empty-cart {
@@ -161,4 +166,34 @@ body {
   font-weight: 700;
   color: white;
   z-index: 2;
+}
+
+.loading {
+  width: 200px;
+  height: 60px;
+  border-radius: 50px;
+  background-color: rgb(207, 201, 201);
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+.item__price {
+  /*Adcionar*/
+}
+
+.icon__image {
+  width: 80px;
+  height: 80px;
+  border: 1px solid rgb(236, 227, 227);
+  border-radius: 50%;
+}
+
+.btn__x {
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  background-color: rgb(221, 215, 215);
+  vertical-align: middle;
+  text-align: center;
 }
